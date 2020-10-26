@@ -77,6 +77,11 @@
                 ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
                 ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
             }
+            else {
+                ship.thrust.x -= FRICTION * ship.thrust.x / FPS
+                ship.thrust.y -= FRICTION * ship.thrust.y / FPS
+
+            }
 
             //draw triangular ship
             ctx.strokeStyle = "white";
@@ -103,6 +108,7 @@
             //move ship
             ship.x += ship.thrust.x;
             ship.y += ship.thrust.y;
+
 
             //center dot
             ctx.fillStyle = "red";
