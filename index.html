@@ -7,7 +7,7 @@
     <script src="thrustTriangle.js"></script>
     <style>
         body { 
-            text-align: center;
+            text-align: center; 
             padding:20px;
         }
     </style>
@@ -17,14 +17,16 @@
     <script>
         const FPS = 30; //Frames per second 
         const FRICTION = 0.7; //friction coefficient of space
-        const ROIDS_JAG = 0.4 //Jaggedness of asteroids (0 = none, 1 = lots)
+        const LASER_MAX = 10; //Maximum number of lasers on screen at once
+        const LASER_SPD = 500; //Speed of lasers in pixels/sec
+        const ROIDS_JAG = .5; //Jaggedness of asteroids (0 = none, 1 = lots)
         const ROIDS_NUM = 7; // starting number of asteroids
         const ROIDS_SIZE = 100; // starting size of asteroids in pixels
         const ROIDS_SPD = 50; // max starting speed of asteroids in pixels/second
         const ROIDS_VERT = 10; //average number of vertices on each asteroid
         const SHIP_EXPLODE_DUR = 1.0; //duration of ship's explotion
         const SHIP_BLINK_DUR = .13; //duration of ship's blink during invisibility in seconds
-        const SHIP_INV_DUR = 3 // duration of ships invisibility in seconds
+        const SHIP_INV_DUR = 3; // duration of ships invisibility in seconds
         const SHIP_SIZE = 30;
         const SHIP_THRUST = 5; //Acceleration of ship per second per second
         const ROTATE_SPEED = 360; // turn speed in degrees per sec
@@ -72,6 +74,9 @@
 
         function keyDown(/** @type {KeyboardEvent} */ ev){
             switch(ev.keyCode) {
+                case 32: //Spacebar (shoot laser)
+                    shootLaser();
+                    break;
                 case 37: //Left arrow
                     ship.rot = ROTATE_SPEED / 180 * Math.PI / FPS;
                     break;
@@ -86,6 +91,9 @@
 
         function keyUp(/** @type {KeyboardEvent} */ ev) {
             switch(ev.keyCode) {
+                case 32: //Spacebar (allow shooting again)
+                    ship.canShoot = true;
+                    break;
                 case 37: // stop rotating left 
                     ship.rot = 0;
                     break;
@@ -125,7 +133,9 @@
                 a: 90 / 180 * Math.PI, //angle (convert to radians  )
                 blinkNum: Math.ceil(SHIP_INV_DUR / SHIP_BLINK_DUR),
                 blinkTime: Math.ceil(SHIP_BLINK_DUR * FPS),
+                canShoot: true,
                 explodeTime: 0,
+                lasers: [],
                 rot: 0,
                 thrusting: false,
                 thrust: {
@@ -133,6 +143,20 @@
                     y: 0
                 }
             }
+        }
+
+        function shootLaser() {
+            //create the laser object
+            if ( ship.canShoot && ship.lasers.length < LASER_MAX ) {
+                ship.lasers.push({ //from the nose of the ship
+                    x: ship.x + 4/3 * ship.r * Math.cos(ship.a),
+                    y: ship.y - 4/3 * ship.r * Math.sin(ship.a),
+                    xv: LASER_SPD * Math.cos(ship.a) / FPS,
+                    yv: LASER_SPD * Math.sin(ship.a) / FPS
+                })
+            }
+            // prevent further shooting
+            ship.canShoot = false;
         }
 
         function update(){
@@ -148,7 +172,7 @@
                 ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
                 ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
 
-                if ( !exploding ) {
+                if ( !exploding && blinkOn ) {
                     showTriangle();
                 }
 
@@ -334,6 +358,14 @@
             if (SHOW_CENTER_DOT){
                 ctx.fillStyle = "red";
                 ctx.fillRect(ship.x - 1, ship.y - 1, 2, 2);
+            }
+
+            //draw the lasers
+            for ( var i = 0; i < ship.lasers.length; i++ ) {
+                ctx.fillStyle = "salmon";
+                ctx.beginPath();
+                ctx.arc(ship.lasers[i].x, ship.lasers[i].y, SHIP_SIZE / 15, 0, Math.PI * 2, false);
+                ctx.fill();
             }
             
         }
