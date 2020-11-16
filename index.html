@@ -18,6 +18,7 @@
         const FPS = 30; //Frames per second 
         const FRICTION = 0.7; //friction coefficient of space
         const LASER_MAX = 10; //Maximum number of lasers on screen at once
+        const LASER_DIST = 0.5; //Maximum distance laser can travel as fraction of screen width
         const LASER_SPD = 500; //Speed of lasers in pixels/sec
         const ROIDS_JAG = .5; //Jaggedness of asteroids (0 = none, 1 = lots)
         const ROIDS_NUM = 7; // starting number of asteroids
@@ -152,7 +153,8 @@
                     x: ship.x + 4/3 * ship.r * Math.cos(ship.a),
                     y: ship.y - 4/3 * ship.r * Math.sin(ship.a),
                     xv: LASER_SPD * Math.cos(ship.a) / FPS,
-                    yv: LASER_SPD * Math.sin(ship.a) / FPS
+                    yv: -LASER_SPD * Math.sin(ship.a) / FPS,
+                    dist: 0
                 })
             }
             // prevent further shooting
@@ -215,7 +217,6 @@
                     if( ship.blinkTime == 0){
                         ship.blinkTime = Math.ceil(SHIP_BLINK_DUR * FPS);
                         ship.blinkNum--;
-                        console.log("ship.blinkNum= " + ship.blinkNum);
 
                     }
                 }
@@ -332,6 +333,37 @@
             }
             else if ( ship.y > canv.height + ship.r ) {
                 ship.y = 0 - ship.r;
+            }
+
+            //move the lasers
+            for (var i = ship.lasers.length -1; i >= 0; i--) {
+
+                //check the distance travelled
+                if(ship.lasers[i].dist > LASER_DIST * canv.width ){
+                    ship.lasers.splice(i, 1);
+                    continue;
+                }
+
+                //move the laser
+                ship.lasers[i].x += ship.lasers[i].xv;
+                ship.lasers[i].y += ship.lasers[i].yv;
+
+                //calculate the distance travelled
+                ship.lasers[i].dist += Math.sqrt(Math.pow(ship.lasers[i].xv, 2) + Math.pow(ship.lasers[i].yv, 2))
+
+                //handle edge of screen
+                if ( ship.lasers[i].x < 0) {
+                    ship.lasers[i].x = canv.width;
+                }
+                else if ( ship.lasers[i].x > canv.width ) {
+                    ship.lasers[i].x = 0;
+                }
+                if ( ship.lasers[i].y < 0) {
+                    ship.lasers[i].y = canv.height;
+                }
+                else if ( ship.lasers[i].y > canv.height ) {
+                    ship.lasers[i].y = 0;
+                }
             }
 
             //move the asteroid
