@@ -47,6 +47,9 @@
         var ctx = canv.getContext("2d");
         var ship = newShip();
 
+        //set up sound effects
+        var fxLaser = new Sound("sounds/laser.m4a", 7, 0.5);
+
         //set up the game parameters
         var level, lives, roids, score, scoreHigh, ship, text, textAlpha;
         newGame();
@@ -269,10 +272,24 @@
                     yv: -LASER_SPD * Math.sin(ship.a) / FPS,
                     dist: 0,
                     explodeTime: 0
-                })
+                });
+                fxLaser.play();
             }
             // prevent further shooting
             ship.canShoot = false;
+        }
+
+        function Sound(src, maxStreams = 1, vol = 1.0) {
+            this.streamNum = 0;
+            this.streams = [];
+            for (var i = 0; i < maxStreams; i++) {
+                this.streams.push(new Audio(src));
+                this.streams[i].volume = vol;
+                this.play = function() {
+                    this.streamNum = (this.streamNum + 1) % maxStreams;
+                    this.streams[this.streamNum].play();
+                }
+            }
         }
 
         function update(){
