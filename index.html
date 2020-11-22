@@ -36,6 +36,7 @@
         const SHIP_INV_DUR = 3; // duration of ships invisibility in seconds
         const SHIP_SIZE = 30;
         const SHIP_THRUST = 5; //Acceleration of ship per second per second
+        const SOUND_ON = true; 
         const ROTATE_SPEED = 210; // turn speed in degrees per sec
         const SHOW_CENTER_DOT = true; // show or hide ship's center dot
         const SHOW_BOUNDING = false; // show or hide collision bounding
@@ -47,8 +48,13 @@
         var ctx = canv.getContext("2d");
         var ship = newShip();
 
+        
+
         //set up sound effects
         var fxLaser = new Sound("sounds/laser.m4a", 7, 0.5);
+        var fxExplode = new Sound("sounds/explode.m4a",);
+        var fxHit = new Sound("sounds/hit.m4a", 5); 
+        var fxThrust = new Sound("sounds/thrust.m4a"); 
 
         //set up the game parameters
         var level, lives, roids, score, scoreHigh, ship, text, textAlpha;
@@ -107,6 +113,7 @@
 
             //destroy the asteroid
             roids.splice(index, 1);
+            fxHit.play();
 
             //new level when no more asteroids
             if( roids.length == 0) {
@@ -142,6 +149,7 @@
 
         function explodeShip(){
             ship.explodeTime = Math.ceil(SHIP_EXPLODE_DUR * FPS);
+            fxExplode.play();
         }
 
         function gameOver() {
@@ -285,10 +293,16 @@
             for (var i = 0; i < maxStreams; i++) {
                 this.streams.push(new Audio(src));
                 this.streams[i].volume = vol;
-                this.play = function() {
+            }
+            this.play = function() {
+                if (SOUND_ON) {
                     this.streamNum = (this.streamNum + 1) % maxStreams;
                     this.streams[this.streamNum].play();
                 }
+            }
+            this.stop = function() {
+                this.streams[this.streamNum].pause();
+                this.streams[this.streamNum].currentTime = 0;
             }
         }
 
@@ -304,6 +318,7 @@
             if(ship.thrusting && !ship.dead) {
                 ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
                 ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
+                fxThrust.play();
 
                 if ( !exploding && blinkOn ) {
                     showTriangle();
@@ -313,7 +328,7 @@
             else {
                 ship.thrust.x -= FRICTION * ship.thrust.x / FPS
                 ship.thrust.y -= FRICTION * ship.thrust.y / FPS
-
+                fxThrust.stop();
             }
 
             //draw triangular ship
