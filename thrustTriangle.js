@@ -3,8 +3,8 @@
 function showTriangle() {
 
     //outer triangle
-    ctx.strokeStyle = "#332e00";
-    ctx.fillStyle = "#332e00";
+    ctx.strokeStyle = "rgb(252, 228, 0, 0.1)";
+    ctx.fillStyle = "rgb(252, 228, 0, 0.1)";
 
     ctx.lineWidth = SHIP_SIZE / 15;
     ctx.beginPath();
