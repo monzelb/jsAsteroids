@@ -26,8 +26,8 @@ function showTriangle() {
 
 
      //draw the red thruster triangle
-     ctx.fillStyle = "red";
-     ctx.strokeStyle = "yellow";
+     ctx.fillStyle = "rgb(255, 0, 0, 0.7)";
+     ctx.strokeStyle = "rgb(243, 235, 5, 0.6)";
      ctx.lineWidth = SHIP_SIZE / 15;
      ctx.beginPath();
      ctx.moveTo( //rear left
@@ -48,7 +48,7 @@ function showTriangle() {
 
 
      //smaller inner thruster triangle
-     ctx.strokeStyle = "yellow";
+     ctx.strokeStyle = "rgb(243, 235, 5, 0.8)";
      ctx.lineWidth = SHIP_SIZE / 10;
      ctx.beginPath();
      ctx.moveTo( //rear left

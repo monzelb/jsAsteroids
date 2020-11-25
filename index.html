@@ -32,9 +32,9 @@
         const ROIDS_PTS_LGE = 20; //Points scored for large asteroid
         const ROIDS_PTS_MED = 50; //Points scored for medium asteroid
         const ROIDS_PTS_SML = 100; //Points scored for small asteroid
-        const ROIDS_NUM = 1; // starting number of asteroids
+        const ROIDS_NUM = 4; // starting number of asteroids
         const ROIDS_SIZE = 100; // starting size of asteroids in pixels
-        const ROIDS_SPD = 50; // max starting speed of asteroids in pixels/second
+        const ROIDS_SPD = 60; // max starting speed of asteroids in pixels/second
         const ROIDS_VERT = 10; //average number of vertices on each asteroid
         const SHIP_EXPLODE_DUR = 0.3; //duration of ship's explosion
         const SAVE_KEY_SCORE = "highscore"; //save key for local storage of high score
@@ -457,9 +457,17 @@
             ctx.lineWidth = SHIP_SIZE / 20;
             var x, y, r, a, vert, offs;
             for ( var i = 0; i< roids.length; i++) {
+                
 
                 ctx.strokeStyle = "slategrey";
-                ctx.fillStyle="#192b34";
+                // ctx.fillStyle="#192b34";
+
+                var grd = ctx.createLinearGradient(0, 0, 900, 0);
+                grd.addColorStop(0, "#192b34");
+                grd.addColorStop(1, "#4b3f56");
+
+                // Fill with gradient
+                ctx.fillStyle = grd;
 
                 //get the asteroid properties
                 x = roids[i].x;
