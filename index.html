@@ -34,7 +34,7 @@
         const ROIDS_PTS_SML = 100; //Points scored for small asteroid
         const ROIDS_NUM = 4; // starting number of asteroids
         const ROIDS_SIZE = 100; // starting size of asteroids in pixels
-        const ROIDS_SPD = 60; // max starting speed of asteroids in pixels/second
+        const ROIDS_SPD = 65; // max starting speed of asteroids in pixels/second
         const ROIDS_VERT = 10; //average number of vertices on each asteroid
         const SHIP_EXPLODE_DUR = 0.3; //duration of ship's explosion
         const SAVE_KEY_SCORE = "highscore"; //save key for local storage of high score
@@ -42,10 +42,10 @@
         const SHIP_INV_DUR = 3; // duration of ships invisibility in seconds
         const SHIP_SIZE = 30;
         const SHIP_THRUST = 5; //Acceleration of ship per second per second
-        const SOUND_ON = true; 
-        const MUSIC_ON = true; 
+        const SOUND_ON = false; 
+        const MUSIC_ON = false; 
         const ROTATE_SPEED = 210; // turn speed in degrees per sec
-        const SHOW_CENTER_DOT = true; // show or hide ship's center dot
+        const SHOW_CENTER_DOT = false; // show or hide ship's center dot
         const SHOW_BOUNDING = false; // show or hide collision bounding
         const TEXT_FADE_TIME = 2.5; // text fade time in seconds
         const TEXT_SIZE = 40; // text font size in pixels
@@ -72,7 +72,7 @@
         var bg8 = new Image();
         bg8.src = "images/galaxy-8.jpg";
 
-        var bgImages = [bg8.src, bg7.src, bg3.src, bg4.src, bg5.src, bg6.src, bg2.src, bg1.src];
+        var bgImages = [bg4.src, bg7.src, bg1.src, bg8.src, bg5.src, bg6.src, bg2.src, bg3.src];
         var currentBgIndex = 0;
 
         
@@ -157,8 +157,11 @@
             return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
         }
 
-        function drawShip(x, y, a, color = "white") {
+        function drawShip(x, y, a, color = "aqua") {
+
+            //draw underliying triangle of ship
             ctx.strokeStyle = color;
+            ctx.fillStyle = color;
             ctx.lineWidth = SHIP_SIZE / 20;
             ctx.beginPath();
             ctx.moveTo( //Nose of the ship
@@ -175,6 +178,86 @@
             );
             ctx.closePath();
             ctx.stroke();
+            ctx.fill();
+
+            //draw second triangle of ship
+            ctx.strokeStyle = "#21ABCD";
+            ctx.fillStyle = "#21ABCD";
+            ctx.lineWidth = SHIP_SIZE / 20;
+            ctx.beginPath();
+            ctx.moveTo( //Nose of the ship
+                x + 7/8 * ship.r * Math.cos(a),
+                y - 7/8 * ship.r * Math.sin(a)
+            );
+            ctx.lineTo( //rear left
+                x - ship.r * (2/3 * Math.cos(a) + Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) - Math.cos(a))
+            );
+            ctx.lineTo( //rear right
+                x - ship.r * (2/3 * Math.cos(a) - Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) + Math.cos(a))
+            );
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+
+            //draw third triangle of ship
+            ctx.strokeStyle = "#128aa8";
+            ctx.fillStyle = "#128aa8";
+            ctx.lineWidth = SHIP_SIZE / 20;
+            ctx.beginPath();
+            ctx.moveTo( //center of the ship
+                x,
+                y
+            );
+            ctx.lineTo( //rear left
+                x - ship.r * (2/3 * Math.cos(a) + Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) - Math.cos(a))
+            );
+            ctx.lineTo( //rear right
+                x - ship.r * (2/3 * Math.cos(a) - Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) + Math.cos(a))
+            );
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+
+            //draw center line of ship
+            ctx.strokeStyle = "#128aa8";
+            ctx.lineWidth = SHIP_SIZE / 8;
+            ctx.beginPath();
+            ctx.moveTo( //center of ship
+                x,
+                y
+            );
+            ctx.lineTo( //near nose of ship
+                x + 2/3 * ship.r * Math.cos(a),
+                y - 2/3 * ship.r * Math.sin(a)
+            );
+            ctx.closePath();
+            ctx.stroke();
+
+            //draw fourth (rear) triangle of ship
+            ctx.strokeStyle = "#045265";
+            ctx.fillStyle = "#045265";
+            ctx.lineWidth = SHIP_SIZE / 20;
+            ctx.beginPath();
+            ctx.moveTo( //just behind center of ship
+                x - 1/2 * ship.r * Math.cos(a),
+                y + 1/2 * ship.r * Math.sin(a)
+            );
+            ctx.lineTo( //rear left
+                x - ship.r * (2/3 * Math.cos(a) + Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) - Math.cos(a))
+            );
+            ctx.lineTo( //rear right
+                x - ship.r * (2/3 * Math.cos(a) - Math.sin(a)),
+                y + ship.r * (2/3 * Math.sin(a) + Math.cos(a))
+            );
+            ctx.closePath();
+            ctx.stroke();
+            ctx.fill();
+
         }
 
         function explodeShip(){
@@ -424,23 +507,23 @@
             }
             else{
                 //draw the explosion
-                ctx.fillStyle = "darkred";
+                ctx.fillStyle = "rgb(139, 0, 0, 0.6)";
                 ctx.beginPath();
                 ctx.arc(ship.x, ship.y, ship.r * 1.7, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.fillStyle = "red";
+                ctx.fillStyle = "rgb(	255, 0, 0, 0.6)";
                 ctx.beginPath();
                 ctx.arc(ship.x, ship.y, ship.r * 1.4, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.fillStyle = "orange";
+                ctx.fillStyle = "rgb(255, 127, 0, 0.6)";
                 ctx.beginPath();
                 ctx.arc(ship.x, ship.y, ship.r * 1.1, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.fillStyle = "yellow";
+                ctx.fillStyle = "rgb(255, 255, 0, 0.6)";
                 ctx.beginPath();
                 ctx.arc(ship.x, ship.y, ship.r * 0.8, 0, Math.PI * 2, false);
                 ctx.fill();
-                ctx.fillStyle = "white";
+                ctx.fillStyle = "rgb(255, 255, 255, 0.6)";
                 ctx.beginPath();
                 ctx.arc(ship.x, ship.y, ship.r * 0.5, 0, Math.PI * 2, false);
                 ctx.fill();
@@ -664,7 +747,7 @@
             //draw the lives
             var lifeColor
             for (var i = 0; i < lives; i++) {
-                lifeColor = exploding && i == lives - 1 ? "red" : "white";
+                lifeColor = exploding && i == lives - 1 ? "red" : "aqua";
                 drawShip(SHIP_SIZE + i * SHIP_SIZE * 1.2, SHIP_SIZE, 0.5 * Math.PI, lifeColor);
             }
 
