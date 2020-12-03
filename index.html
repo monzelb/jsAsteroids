@@ -42,7 +42,7 @@
         const SHIP_INV_DUR = 3; // duration of ships invisibility in seconds
         const SHIP_SIZE = 30;
         const SHIP_THRUST = 5; //Acceleration of ship per second per second
-        const SOUND_ON = false; 
+        const SOUND_ON = true; 
         const MUSIC_ON = false; 
         const ROTATE_SPEED = 210; // turn speed in degrees per sec
         const SHOW_CENTER_DOT = false; // show or hide ship's center dot
@@ -78,10 +78,14 @@
         
 
         //set up sound effects
-        var fxLaser = new Sound("sounds/laser.m4a", 7, 0.2);
-        var fxExplode = new Sound("sounds/explode.m4a",);
-        var fxHit = new Sound("sounds/hit.m4a", 5); 
-        var fxThrust = new Sound("sounds/thrust.m4a"); 
+        var fxLaser = new Sound("sounds/Laser_Blast.wav", 7, 0.2);
+        var fxExplode = new Sound("sounds/explode.m4a", 1, 0.2);
+        var fxHit = new Sound("sounds/hit.m4a", 5, 0.1); 
+        var fxThrust = new Sound("sounds/thrust.m4a", 1, 0.15); 
+        var planetarium = new Sound("sounds/Planetarium.wav");
+        var gameOverFX = new Sound("sounds/Game_Over.wav");
+        var bgMusic = new Sound("sounds/bgMusic2.wav", 1, 0.3);
+        // bgMusic.loop = true;
 
         //set up music
         var music = new Music("sounds/music-low.m4a", "sounds/music-high.m4a");
@@ -266,6 +270,7 @@
         }
 
         function gameOver() {
+            gameOverFX.play();
             //TODO gameover
             ship.dead = true;
             text = "Game Over";
@@ -357,6 +362,7 @@
         }
 
         function newLevel() {
+            planetarium.play();
             text = "level " + (level + 1);
             textAlpha = 1.0
             createAsteroidBelt();
@@ -404,6 +410,8 @@
                     explodeTime: 0
                 });
                 fxLaser.play();
+                bgMusic.play();
+
             }
             // prevent further shooting
             ship.canShoot = false;
